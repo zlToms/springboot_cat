@@ -2,6 +2,8 @@ package com.tang.zhen.film;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tang.zhen.film.dao.entity.NextUser;
 import com.tang.zhen.film.dao.mapper.NextUserMapper;
 import com.tang.zhen.film.example.dao.UserMapper;
@@ -80,5 +82,20 @@ class NextFilmApplicationTests {
         Integer id = 5;
         NextUser insert = nextUserMapper.selectById(id);
         System.out.println(insert);
+    }
+
+    @Test
+    public  void queryByOurs(){
+        List<NextUser> insert = nextUserMapper.getUser();
+        insert.forEach(System.out::println);
+    }
+
+    @Test
+    public  void pageTest(){
+        IPage<NextUser> iPage = new Page<>();
+        iPage.setCurrent(1);
+        iPage.setSize(2);
+        IPage<NextUser > nextUserIPage = nextUserMapper.selectPage(iPage,null);
+        System.out.println(nextUserIPage);
     }
 }
