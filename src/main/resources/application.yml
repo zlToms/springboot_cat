@@ -1,4 +1,7 @@
 
+server:
+  port:8080
+
 mybatis-plus:
   mapper-locations: classpath*:com/tang/zhen/**/xml/*Mapper.xml
   global-config:
