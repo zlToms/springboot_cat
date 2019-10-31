@@ -2,6 +2,7 @@ package com.tang.zhen.film.comtroller.common.handler;
 
 import com.tang.zhen.film.comtroller.common.BaseResponseVO;
 import com.tang.zhen.film.comtroller.exception.NextFilmException;
+import com.tang.zhen.film.comtroller.exception.ParamErrorException;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody  //返回一个json
     public BaseResponseVO commonServiceException(CommonServiceException e){
+        return BaseResponseVO.serviceFaied(e.getCode(),e.getErrMsg());
+    }
+
+    @ExceptionHandler(ParamErrorException.class) //拦截什么样的异常
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody  //返回一个json
+    public BaseResponseVO paramErrorException(ParamErrorException e){
         return BaseResponseVO.serviceFaied(e.getCode(),e.getErrMsg());
     }
 
