@@ -103,7 +103,7 @@ public final class BaseResponseVO<V> {
     public static<V> BaseResponseVO noLogin(){
         BaseResponseVO baseResponseVO = new BaseResponseVO();
         baseResponseVO.setStatus(700);
-        baseResponseVO.setMsg("用户没又登陆！");
+        baseResponseVO.setMsg("用户没有登陆！");
         return baseResponseVO;
     }
 }

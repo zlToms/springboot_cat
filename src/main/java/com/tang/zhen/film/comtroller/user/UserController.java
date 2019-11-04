@@ -9,18 +9,25 @@ import com.tang.zhen.film.comtroller.user.vo.EnrollUserVO;
 import com.tang.zhen.film.comtroller.user.vo.UserInfoVO;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import com.tang.zhen.film.service.user.UserServiceAPI;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController  //默认所有的返回都做Responsebody处理
-@RequestMapping(value = "/nextfilm/user/")
+@RequestMapping(value = "/user/")
+@Api("用户相关的API")
 public class UserController {
 
     @Autowired
     private UserServiceAPI userServiceAPI;
 
+    @ApiOperation(value = "用户名重复验证",notes = "用户名重复验证")
+    @ApiImplicitParam(name = "username"
+            ,value="待验证的用户名称",paramType = "query",required = true,dataType = "string")
     @RequestMapping(value = "check",method = RequestMethod.POST)
     public BaseResponseVO checkUser(String username) throws CommonServiceException, NextFilmException {
 
@@ -68,5 +75,19 @@ public class UserController {
         UserInfoVO result = userServiceAPI.updateUserInfo(userInfoVO);
         userInfoVO.checkParam();
         return BaseResponseVO.success(result);
+    }
+
+    @RequestMapping(value = "lougout",method = RequestMethod.POST)
+    public BaseResponseVO logout() throws CommonServiceException, ParamErrorException {
+
+        String userId = TraceUtil.getUserId();
+
+        /**
+         * 1、用户信息放入redis缓存
+         * 2、去掉用户缓存
+         */
+
+
+        return BaseResponseVO.success();
     }
 }

@@ -2,6 +2,16 @@
 server:
   port:8080
 
+rest:
+  auth-open:true #如果为true则开启JWT的验证
+
+
+jwt:
+  header: Authorization   #http请求头所需要的字段
+  secret: mySecret        #jwt秘钥
+  expiration: 604800      #7天 单位:秒
+  md5-key: randomKey      #md5加密混淆key
+
 mybatis-plus:
   mapper-locations: classpath*:com/tang/zhen/**/xml/*Mapper.xml
   global-config:

@@ -22,7 +22,7 @@ public class Swagger2Config {
                 .apiInfo(apiInfo())
                 .select()
                 //为当前包路径
-                .apis(RequestHandlerSelectors.basePackage("com.tang.zhen.film.example.comtroller"))
+                .apis(RequestHandlerSelectors.basePackage("com.tang.zhen.film.comtroller"))
                 .paths(PathSelectors.any())
                 .build();
     }
