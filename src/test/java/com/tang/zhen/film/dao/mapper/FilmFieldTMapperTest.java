@@ -3,6 +3,7 @@ package com.tang.zhen.film.dao.mapper;
 
 import com.tang.zhen.film.comtroller.cinema.vo.CinemaFilmInfoVO;
 import com.tang.zhen.film.comtroller.cinema.vo.CinemaFilmVO;
+import com.tang.zhen.film.comtroller.cinema.vo.FieldHallInfoVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,13 @@ public class FilmFieldTMapperTest {
     public void describeFilmInfoTest(){
         CinemaFilmInfoVO cinemaFilmVOS = filmFieldTMapper.describeFilmInfo("1");
         System.out.println(cinemaFilmVOS);
+
+    }
+
+    @Test
+    public void describeInfoTest(){
+        FieldHallInfoVO fieldHallInfoVO = filmFieldTMapper.describeHallInfo("1");
+        System.out.println(fieldHallInfoVO);
 
     }
 
