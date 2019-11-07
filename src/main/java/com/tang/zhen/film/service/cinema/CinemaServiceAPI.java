@@ -1,5 +1,6 @@
 package com.tang.zhen.film.service.cinema;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tang.zhen.film.comtroller.cinema.vo.*;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.AreaResVO;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.BrandResVO;
@@ -14,14 +15,15 @@ public interface CinemaServiceAPI {
 
     /**
      * 根据条件查询影院列表
-     * @param describeCinemaRequestVO
+     * @param vo
      * @return
      */
-    List<CinemaVO>  describeCinemaInfo(DescribeCinemaRequestVO describeCinemaRequestVO);
+    Page<CinemaVO> describeCinemaInfo(DescribeCinemaRequestVO vo);
 
     /**
      * 获取查询条件
      */
+    boolean checkCondition(int conditionId,String conditionType);
     List<BrandResVO> describeBrandConditions(int brandId);
 
     List<AreaResVO> describeAreaConditions(int areaId);
