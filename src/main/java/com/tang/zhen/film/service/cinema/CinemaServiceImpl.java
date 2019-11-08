@@ -113,13 +113,38 @@ public class CinemaServiceImpl implements CinemaServiceAPI {
     }
 
     @Override
-    public List<AreaResVO> describeAreaConditions(int areaId) {
-        return null;
+    public List<AreaResVO> describeAreaConditions(final int areaId) {
+        //获取所有列表
+        List<FilmAreaDictT> areaDictTS = areaDictTMapper.selectList(null);
+
+        List<AreaResVO> result =
+                areaDictTS.stream().map((data)->{
+                    AreaResVO areaResVO = new AreaResVO();
+                    if(areaId == data.getUuid()){
+                        areaResVO.setActive(true);
+                    }
+                    areaResVO.setAreaName(data.getShowName());
+                    areaResVO.setAreaId(data.getUuid()+"");
+                    return areaResVO;
+                }).collect(Collectors.toList());
+        return result;
     }
 
     @Override
-    public List<HallTypeResVO> describeHallTypeConditions(int hallTypeId) {
-        return null;
+    public List<HallTypeResVO> describeHallTypeConditions(final int hallTypeId) {
+        List<FilmHallDictT> hallDictTS = hallDictTMapper.selectList(null);
+
+        List<HallTypeResVO> result = hallDictTS.stream().map((data)->{
+            HallTypeResVO hallTypeResVO = new HallTypeResVO();
+            if(hallTypeId == data.getUuid()){
+                hallTypeResVO.setActive(true);
+            }
+            hallTypeResVO.setHallTypeId(data.getUuid()+"");
+            hallTypeResVO.setHallTypeName(data.getShowName());
+            return hallTypeResVO;
+        }).collect(Collectors.toList());
+
+        return result;
     }
 
     @Override

@@ -2,7 +2,9 @@ package com.tang.zhen.film.service.cinema;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tang.zhen.film.comtroller.cinema.vo.CinemaVO;
+import com.tang.zhen.film.comtroller.cinema.vo.condition.AreaResVO;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.BrandResVO;
+import com.tang.zhen.film.comtroller.cinema.vo.condition.HallTypeResVO;
 import com.tang.zhen.film.comtroller.cinema.vo.request.DescribeCinemaRequestVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -42,10 +44,14 @@ public class CinemaServiceImplTest {
 
     @Test
     public void describeAreaConditions() {
+        List<AreaResVO> vos = cinemaServiceAPI.describeAreaConditions(1);
+        vos.stream().forEach(data->System.out.println(data));
     }
 
     @Test
     public void describeHallTypeConditions() {
+        List<HallTypeResVO> vos = cinemaServiceAPI.describeHallTypeConditions(1);
+        vos.stream().forEach(data->System.out.println(data));
     }
 
     @Test
