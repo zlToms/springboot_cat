@@ -1,16 +1,14 @@
-package com.tang.zhen.film.comtroller.auth.controller.vo;
+package com.tang.zhen.film.comtroller.cinema.auth.controller.vo;
 
 import com.tang.zhen.film.comtroller.common.BaseVO;
 import com.tang.zhen.film.comtroller.exception.ParamErrorException;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-public class AuthResponseVO extends BaseVO {
+public class AuthRequestVO  extends BaseVO {
 
-    private String randomKey;
-    private String token;
+    private String username;
+    private String password;
 
     @Override
     public void checkParam() throws ParamErrorException {

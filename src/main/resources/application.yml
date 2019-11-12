@@ -32,3 +32,8 @@ logging:
   level.com.tang.zhen: debug
   path: logs/
   file: next-film.log
+
+
+film:
+  img-pre: http://nextfilm.cn/
+

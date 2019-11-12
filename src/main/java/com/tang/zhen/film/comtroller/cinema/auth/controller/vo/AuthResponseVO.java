@@ -1,15 +1,16 @@
-package com.tang.zhen.film.comtroller.auth.controller.vo;
+package com.tang.zhen.film.comtroller.cinema.auth.controller.vo;
 
 import com.tang.zhen.film.comtroller.common.BaseVO;
 import com.tang.zhen.film.comtroller.exception.ParamErrorException;
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.web.bind.annotation.RestController;
 
 @Data
-public class AuthRequestVO  extends BaseVO {
+@Builder
+public class AuthResponseVO extends BaseVO {
 
-    private String username;
-    private String password;
+    private String randomKey;
+    private String token;
 
     @Override
     public void checkParam() throws ParamErrorException {

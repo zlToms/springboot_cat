@@ -1,4 +1,4 @@
-package com.tang.zhen.film.comtroller.auth.util;
+package com.tang.zhen.film.comtroller.cinema.auth.util;
 
 
 import com.tang.zhen.film.config.properties.JwtProperties;

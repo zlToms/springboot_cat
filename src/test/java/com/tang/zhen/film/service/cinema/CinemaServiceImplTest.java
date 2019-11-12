@@ -1,7 +1,7 @@
 package com.tang.zhen.film.service.cinema;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tang.zhen.film.comtroller.cinema.vo.CinemaVO;
+import com.tang.zhen.film.comtroller.cinema.vo.*;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.AreaResVO;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.BrandResVO;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.HallTypeResVO;
@@ -56,17 +56,25 @@ public class CinemaServiceImplTest {
 
     @Test
     public void describeCinemaDetails() {
+        CinemaDetailVO cinemaDetailVO = cinemaServiceAPI.describeCinemaDetails("1");
+        System.out.println(cinemaDetailVO);
     }
 
     @Test
     public void describeFieldsAndFilmInfo() {
+        List<CinemaFilmVO> vos = cinemaServiceAPI.describeFieldsAndFilmInfo("1");
+        vos.stream().forEach(data->System.out.println(data));
     }
 
     @Test
     public void describeFilmInfoByFieldId() {
+        CinemaFilmInfoVO vo = cinemaServiceAPI.describeFilmInfoByFieldId("1");
+        System.out.println(vo);
     }
 
     @Test
     public void describeHallInfoByFieldId() {
+        FieldHallInfoVO vo = cinemaServiceAPI.describeHallInfoByFieldId("1");
+        System.out.println(vo);
     }
 }

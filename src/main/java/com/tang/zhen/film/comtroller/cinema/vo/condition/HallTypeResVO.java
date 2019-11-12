@@ -8,6 +8,6 @@ import java.io.Serializable;
 public class HallTypeResVO implements Serializable {
     private String hallTypeId;
     private String hallTypeName;
-    private boolean isActive;
+    private String isActive;
 
 }

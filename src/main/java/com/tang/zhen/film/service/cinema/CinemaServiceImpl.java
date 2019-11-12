@@ -3,6 +3,7 @@ package com.tang.zhen.film.service.cinema;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Lists;
 import com.tang.zhen.film.comtroller.cinema.vo.*;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.AreaResVO;
 import com.tang.zhen.film.comtroller.cinema.vo.condition.BrandResVO;
@@ -102,9 +103,11 @@ public class CinemaServiceImpl implements CinemaServiceAPI {
                 brands.stream().map((data)->{
                     BrandResVO brandResVO = new BrandResVO();
                     if(brandId == data.getUuid()){
-                        brandResVO.setActive(true);
+                        brandResVO.setIsActive("true");
+                    }else {
+                        brandResVO.setIsActive("false");
                     }
-                    brandResVO.setBrandId(brandId+"");
+                    brandResVO.setBrandId(data.getUuid()+"");
                     brandResVO.setBrandName(data.getShowName());
                     return  brandResVO;
                 }).collect(Collectors.toList());
@@ -121,7 +124,9 @@ public class CinemaServiceImpl implements CinemaServiceAPI {
                 areaDictTS.stream().map((data)->{
                     AreaResVO areaResVO = new AreaResVO();
                     if(areaId == data.getUuid()){
-                        areaResVO.setActive(true);
+                        areaResVO.setIsActive("true");
+                    }else{
+                        areaResVO.setIsActive("false");
                     }
                     areaResVO.setAreaName(data.getShowName());
                     areaResVO.setAreaId(data.getUuid()+"");
@@ -137,7 +142,9 @@ public class CinemaServiceImpl implements CinemaServiceAPI {
         List<HallTypeResVO> result = hallDictTS.stream().map((data)->{
             HallTypeResVO hallTypeResVO = new HallTypeResVO();
             if(hallTypeId == data.getUuid()){
-                hallTypeResVO.setActive(true);
+                hallTypeResVO.setIsActive("true");
+            }else{
+                hallTypeResVO.setIsActive("false");
             }
             hallTypeResVO.setHallTypeId(data.getUuid()+"");
             hallTypeResVO.setHallTypeName(data.getShowName());
@@ -149,21 +156,43 @@ public class CinemaServiceImpl implements CinemaServiceAPI {
 
     @Override
     public CinemaDetailVO describeCinemaDetails(String cinemaId) {
-        return null;
+        FilmCinemaT data = cinemaTMapper.selectById(cinemaId);
+
+        CinemaDetailVO cinemaDetailVO = CinemaDetailVO.builder()
+                .cinemaAdress(data.getCinemaAddress())
+                .cinemaId(data.getUuid()+"")
+                .cinemaName(data.getCinemaName())
+                .cinemaPhone(data.getCinemaPhone())
+                .imgUrl(data.getImgAddress())
+                .build();
+        return cinemaDetailVO;
     }
 
     @Override
     public List<CinemaFilmVO> describeFieldsAndFilmInfo(String cinemaId) {
-        return null;
+        //确认cinemaId是否有效
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("uuid",cinemaId);
+        Integer isNull = filmFieldTMapper.selectCount(queryWrapper);
+        if(isNull == null){
+            return Lists.newArrayList();
+        }
+
+
+        List<CinemaFilmVO> filmVOS = filmFieldTMapper.describeFieldList(cinemaId);
+
+        return filmVOS;
     }
 
     @Override
     public CinemaFilmInfoVO describeFilmInfoByFieldId(String fieldId) {
-        return null;
+        CinemaFilmInfoVO vo = filmFieldTMapper.describeFilmInfo(fieldId);
+        return vo;
     }
 
     @Override
     public FieldHallInfoVO describeHallInfoByFieldId(String fieldId) {
-        return null;
+
+        return filmFieldTMapper.describeHallInfo(fieldId);
     }
 }

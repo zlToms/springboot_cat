@@ -3,7 +3,7 @@ package com.tang.zhen.film.comtroller.common.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.tang.zhen.film.comtroller.auth.util.JwtTokenUtil;
+import com.tang.zhen.film.comtroller.cinema.auth.util.JwtTokenUtil;
 import com.tang.zhen.film.comtroller.common.BaseResponseVO;
 import com.tang.zhen.film.comtroller.common.TraceUtil;
 import com.tang.zhen.film.config.properties.JwtProperties;
@@ -47,6 +47,8 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request.getServletPath().equals("/auth" )
+                ||request.getServletPath().startsWith("/cinema" )
+                ||request.getServletPath().equals("/user/check" )
                 ||request.getServletPath().equals("/user/register" )
                 || request.getServletPath().equals("/swagger-ui.html")
                 || request.getServletPath().startsWith("/swagger-resources")

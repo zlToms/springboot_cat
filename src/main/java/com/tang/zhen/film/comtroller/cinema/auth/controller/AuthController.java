@@ -1,8 +1,8 @@
-package com.tang.zhen.film.comtroller.auth.controller;
+package com.tang.zhen.film.comtroller.cinema.auth.controller;
 
-import com.tang.zhen.film.comtroller.auth.controller.vo.AuthRequestVO;
-import com.tang.zhen.film.comtroller.auth.controller.vo.AuthResponseVO;
-import com.tang.zhen.film.comtroller.auth.util.JwtTokenUtil;
+import com.tang.zhen.film.comtroller.cinema.auth.controller.vo.AuthRequestVO;
+import com.tang.zhen.film.comtroller.cinema.auth.controller.vo.AuthResponseVO;
+import com.tang.zhen.film.comtroller.cinema.auth.util.JwtTokenUtil;
 import com.tang.zhen.film.comtroller.common.BaseResponseVO;
 import com.tang.zhen.film.comtroller.exception.ParamErrorException;
 import com.tang.zhen.film.service.common.CommonServiceException;
