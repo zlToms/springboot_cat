@@ -1,5 +1,6 @@
 package com.tang.zhen.film.service.film;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tang.zhen.film.comtroller.film.vo.request.DescribeFilmListReqVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
@@ -12,11 +13,13 @@ import com.tang.zhen.film.comtroller.film.vo.response.index.BannerInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.SoonFilmListResultVO;
+import com.tang.zhen.film.dao.entity.FilmBannerT;
 import com.tang.zhen.film.dao.mapper.*;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,9 +44,25 @@ public class FilmServiceImpl implements  FilmServiceAPI {
     @Autowired
     private FilmActorRelaTMapper actorRelaTMapper;
 
+    @Autowired
+    private  FilmBannerTMapper bannerTMapper;
+
     @Override
     public List<BannerInfoResultVO> describeBanners() throws CommonServiceException {
-        return null;
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("is_valid","0");
+
+        List<FilmBannerT> list = bannerTMapper.selectList(queryWrapper);
+
+        List<BannerInfoResultVO> result = new ArrayList<>();
+        list.parallelStream().forEach((banner)->{
+            BannerInfoResultVO bannerInfoResultVO = new BannerInfoResultVO();
+            bannerInfoResultVO.setBannerAddress(banner.getBannerAddress());
+            bannerInfoResultVO.setBannerId(banner.getUuid()+"");
+            bannerInfoResultVO.setBannerUrl(banner.getBannerUrl());
+            result.add(bannerInfoResultVO);
+        });
+        return result;
     }
 
     @Override
