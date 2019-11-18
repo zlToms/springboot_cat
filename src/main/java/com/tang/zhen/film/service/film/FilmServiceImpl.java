@@ -1,6 +1,9 @@
 package com.tang.zhen.film.service.film;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tang.zhen.film.common.utils.ToolUtils;
 import com.tang.zhen.film.comtroller.film.vo.request.DescribeFilmListReqVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
@@ -13,14 +16,17 @@ import com.tang.zhen.film.comtroller.film.vo.response.index.BannerInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.SoonFilmListResultVO;
-import com.tang.zhen.film.dao.entity.FilmBannerT;
+import com.tang.zhen.film.dao.entity.*;
 import com.tang.zhen.film.dao.mapper.*;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmServiceImpl implements  FilmServiceAPI {
@@ -67,51 +73,227 @@ public class FilmServiceImpl implements  FilmServiceAPI {
 
     @Override
     public List<HotFilmListResultVO> describeHotFilms() throws CommonServiceException {
-        return null;
+        //默认热映的影片在首页中只查看八条
+        Page<FilmInfoT> page = new Page<>(1,8);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_status","1");
+
+        IPage<FilmInfoT> iPage = filmInfoTMapper.selectPage(page, queryWrapper);
+        List<HotFilmListResultVO> results = new ArrayList<>();
+        iPage.getRecords().stream().forEach((film)->{
+            HotFilmListResultVO result = new HotFilmListResultVO();
+            result.setFilmId(film.getUuid()+"");
+            result.setFilmName(film.getFilmName());
+            result.setFilmScore(film.getFilmScore());
+            result.setFilmType(film.getFilmType()+"");
+            result.setIngAdress(film.getImgAddress());
+            results.add(result);
+        });
+
+
+        return results;
     }
 
     @Override
     public List<SoonFilmListResultVO> describeSoonFilms() throws CommonServiceException {
-        return null;
+
+        //默认即将上映的影片在首页中只查看八条
+        Page<FilmInfoT> page = new Page<>(1,8);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_status","2");
+
+        IPage<FilmInfoT> iPage = filmInfoTMapper.selectPage(page, queryWrapper);
+        List<SoonFilmListResultVO>results = new ArrayList<>();
+        iPage.getRecords().stream().forEach((film)->{
+            SoonFilmListResultVO result = new SoonFilmListResultVO();
+            result.setIngAdress(film.getImgAddress());
+            result.setFilmType(film.getFilmType()+"");
+            result.setFilmName(film.getFilmName());
+            result.setFilmId(film.getUuid()+"");
+            result.setExpectNum(film.getFilmPresalenum()+"");
+            result.setShowTime(localTime2String(film.getFilmTime()));
+
+            results.add(result);
+        });
+        return results;
     }
 
+    private String localTime2String(LocalDateTime localDateTime){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return formatter.format(localDateTime);
+    }
+
+    /**
+     * 票房排行 - 正在热映的电影  top10
+     */
     @Override
     public List<RankFilmListResultVO> boxRankFilmList() throws CommonServiceException {
-        return null;
+        Page<FilmInfoT> page = new Page<>(1,10);
+        page.setDesc("film_box_office");
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_status","1");
+        IPage<FilmInfoT> iPage = filmInfoTMapper.selectPage(page, queryWrapper);
+        List<RankFilmListResultVO> results = new ArrayList<>();
+        iPage.getRecords().stream().forEach((film)->{
+            RankFilmListResultVO vo = new RankFilmListResultVO();
+            vo.setScore(film.getFilmScore());
+            vo.setImgAddress(film.getImgAddress());
+            vo.setFilmName(film.getFilmName());
+            vo.setFilmId(film.getUuid()+"");
+            vo.setExceptNum(film.getFilmPresalenum()+"");
+            vo.setBoxNum(film.getFilmBoxOffice()+"");
+            results.add(vo);
+        });
+
+        return results;
     }
 
+    /**
+     * 期待观影人数排行 - 即将上映的电影
+     */
     @Override
     public List<RankFilmListResultVO> exceptRankFilmList() throws CommonServiceException {
-        return null;
+        Page<FilmInfoT> page = new Page<>(1,10);
+        page.setDesc("film_preSaleNum");
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_status","2");
+        IPage<FilmInfoT> iPage = filmInfoTMapper.selectPage(page, queryWrapper);
+        List<RankFilmListResultVO> results = new ArrayList<>();
+        iPage.getRecords().stream().forEach((film)->{
+            RankFilmListResultVO vo = new RankFilmListResultVO();
+            vo.setScore(film.getFilmScore());
+            vo.setImgAddress(film.getImgAddress());
+            vo.setFilmName(film.getFilmName());
+            vo.setFilmId(film.getUuid()+"");
+            vo.setExceptNum(film.getFilmPresalenum()+"");
+            vo.setBoxNum(film.getFilmBoxOffice()+"");
+            results.add(vo);
+        });
+
+        return results;
     }
 
+    /**
+     * 评分排行 - 正在热映的电影
+     */
     @Override
     public List<RankFilmListResultVO> topRankFilmList() throws CommonServiceException {
-        return null;
+        Page<FilmInfoT> page = new Page<>(1,10);
+        page.setDesc("film_score");
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_status","1");
+        IPage<FilmInfoT> iPage = filmInfoTMapper.selectPage(page, queryWrapper);
+        List<RankFilmListResultVO> results = new ArrayList<>();
+        iPage.getRecords().stream().forEach((film)->{
+            RankFilmListResultVO vo = new RankFilmListResultVO();
+            vo.setScore(film.getFilmScore());
+            vo.setImgAddress(film.getImgAddress());
+            vo.setFilmName(film.getFilmName());
+            vo.setFilmId(film.getUuid()+"");
+            vo.setExceptNum(film.getFilmPresalenum()+"");
+            vo.setBoxNum(film.getFilmBoxOffice()+"");
+            results.add(vo);
+        });
+
+        return results;
     }
 
     @Override
     public String checkCondition(String conditionId, String type) throws CommonServiceException {
-        return null;
+        switch (type){
+            case "source":
+                if("99".equals(conditionId)){
+                    return conditionId;
+                }
+                FilmSourceDictT dictT = sourceDictTMapper.selectById(conditionId);
+                if(dictT!=null&& ToolUtils.isNotEmpty(dictT.getUuid()+"")){
+                    return conditionId;
+                }else{
+                    return "99";
+                }
+            case "year":
+                if("99".equals(conditionId)){
+                    return conditionId;
+                }
+                FilmYearDictT dictT1 = yearDictTMapper.selectById(conditionId);
+                if(dictT1!=null&& ToolUtils.isNotEmpty(dictT1.getUuid()+"")){
+                    return conditionId;
+                }else{
+                    return "99";
+                }
+            case "cat":
+                if("99".equals(conditionId)){
+                    return conditionId;
+                }
+                FilmCatDictT dictT2 = catDictTMapper.selectById(conditionId);
+                if(dictT2!=null&& ToolUtils.isNotEmpty(dictT2.getUuid()+"")){
+                    return conditionId;
+                }else{
+                    return "99";
+                }
+            default:
+                throw new CommonServiceException(404,"ivia;id conditionType");
+        }
     }
 
     @Override
     public List<CatInfoResultVO> describeCatInfos(String catId) throws CommonServiceException {
-        return null;
+        List<FilmCatDictT> list = catDictTMapper.selectList(null);
+        List<CatInfoResultVO> result = list.stream().map((data)->{
+            CatInfoResultVO catInfoResultVO = new CatInfoResultVO();
+            catInfoResultVO.setCartId(data.getUuid()+"");
+            catInfoResultVO.setCartName(data.getShowName());
+            if(catId.equals(data.getUuid()+"")){
+                catInfoResultVO.setIsActive("true");
+            }else{
+                catInfoResultVO.setIsActive("false");
+            }
+            return catInfoResultVO;
+        }).collect(Collectors.toList());
+        return result;
     }
 
     @Override
     public List<SourceInfoResultVO> describeSourceInfos(String sourceId) throws CommonServiceException {
-        return null;
+        List<FilmSourceDictT> list = sourceDictTMapper.selectList(null);
+        List<SourceInfoResultVO> resultVOS = list.stream().map((data)->{
+            SourceInfoResultVO sourceInfoResultVO = new SourceInfoResultVO();
+            sourceInfoResultVO.setSourceId(data.getUuid()+"");
+            sourceInfoResultVO.setSourceName(data.getShowName());
+            if(sourceId.equals(data.getUuid()+"")){
+                sourceInfoResultVO.setIsActive("true");
+            }else{
+                sourceInfoResultVO.setIsActive("false");
+            }
+            return sourceInfoResultVO;
+        }).collect(Collectors.toList());
+        return resultVOS;
     }
 
     @Override
     public List<YearInfoResultVO> describeYearInfos(String yearId) throws CommonServiceException {
-        return null;
+        List<FilmYearDictT> list = yearDictTMapper.selectList(null);
+        List<YearInfoResultVO> resultVOS = list.stream().map((data)->{
+            YearInfoResultVO yearInfoResultVO = new YearInfoResultVO();
+            yearInfoResultVO.setYearId(data.getUuid()+"");
+            yearInfoResultVO.setYearName(data.getShowName());
+            if(yearId.equals(data.getUuid()+"")){
+                yearInfoResultVO.setIsActive("true");
+            }else{
+                yearInfoResultVO.setIsActive("false");
+            }
+            return yearInfoResultVO;
+        }).collect(Collectors.toList());
+        return resultVOS;
     }
 
     @Override
     public List<DescribeFilmListResultVO> describeFilms(DescribeFilmListReqVO filmListReqVO) throws CommonServiceException {
+
+        //判断待搜索列表内容  1-正在热映 ， 2-即将上映 ， 3- 经典影片
+
+        //排序方式  1- 按热门搜索   2- 按时间搜索 3- 按评价搜索
+
         return null;
     }
 

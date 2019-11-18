@@ -1,6 +1,12 @@
 package com.tang.zhen.film.service.film;
 
+import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.condition.YearInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.BannerInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.index.SoonFilmListResultVO;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -29,22 +35,46 @@ public class FilmServiceImplTest {
 
     @Test
     public void describeHotFilms() {
+        try {
+            List<HotFilmListResultVO> list = filmServiceAPI.describeHotFilms();
+            list.stream().forEach(
+                    System.out::println
+            );
+        } catch (CommonServiceException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void describeSoonFilms() {
+    public void describeSoonFilms() throws CommonServiceException {
+        List<SoonFilmListResultVO> vos = filmServiceAPI.describeSoonFilms();
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
-    public void boxRankFilmList() {
+    public void boxRankFilmList() throws CommonServiceException {
+        List<RankFilmListResultVO> vos = filmServiceAPI.boxRankFilmList();
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
-    public void exceptRankFilmList() {
+    public void exceptRankFilmList() throws CommonServiceException {
+        List<RankFilmListResultVO> vos = filmServiceAPI.exceptRankFilmList();
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
-    public void topRankFilmList() {
+    public void topRankFilmList() throws CommonServiceException {
+        List<RankFilmListResultVO> vos = filmServiceAPI.topRankFilmList();
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
@@ -52,15 +82,27 @@ public class FilmServiceImplTest {
     }
 
     @Test
-    public void describeCatInfos() {
+    public void describeCatInfos() throws CommonServiceException {
+        List<CatInfoResultVO> vos = filmServiceAPI.describeCatInfos("1");
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
-    public void describeSourceInfos() {
+    public void describeSourceInfos() throws CommonServiceException {
+        List<SourceInfoResultVO> vos = filmServiceAPI.describeSourceInfos("1");
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
-    public void describeYearInfos() {
+    public void describeYearInfos() throws CommonServiceException {
+        List<YearInfoResultVO> vos = filmServiceAPI.describeYearInfos("1");
+        vos.stream().forEach(
+                System.out::println
+        );
     }
 
     @Test
