@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -288,27 +290,61 @@ public class FilmServiceImpl implements  FilmServiceAPI {
     }
 
     @Override
-    public List<DescribeFilmListResultVO> describeFilms(DescribeFilmListReqVO filmListReqVO) throws CommonServiceException {
+    public IPage<FilmInfoT> describeFilms(DescribeFilmListReqVO filmListReqVO) throws CommonServiceException {
+        Page<FilmInfoT> infoTPage =
+                new Page<FilmInfoT>(Long.parseLong(filmListReqVO.getNowPage()),Long.parseLong(filmListReqVO.getPageSize()));
 
-        //判断待搜索列表内容  1-正在热映 ， 2-即将上映 ， 3- 经典影片
 
         //排序方式  1- 按热门搜索   2- 按时间搜索 3- 按评价搜索
+        Map<String,String> sortMap = new HashMap<>();
+        sortMap.put("1","film_preSaleNum");
+        sortMap.put("2","film_time");
+        sortMap.put("3","film_score");
+        //hashMap搜索的时间复杂度是log0 远比switch要快
 
-        return null;
+        infoTPage.setDesc(sortMap.get(filmListReqVO.getSortId()));
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+
+        //判断待搜索列表内容  1-正在热映 ， 2-即将上映 ， 3- 经典影片
+        queryWrapper.eq("film_status",filmListReqVO.getShowType());
+        //组织QueryWrapper的内容
+        if(!"99".equals(filmListReqVO.getSortId())){
+            queryWrapper.eq("film_source",filmListReqVO.getSortId());
+        }
+        if(!"99".equals(filmListReqVO.getYearId())){
+            queryWrapper.eq("film_date",filmListReqVO.getYearId());
+        }
+        //#3#2#2
+        if(!"99".equals(filmListReqVO.getCatId())){
+            queryWrapper.like("film_cats","#" +filmListReqVO.getCatId() +"#");
+        }
+        IPage<FilmInfoT> iPage = filmInfoTMapper.selectPage(infoTPage, queryWrapper);
+
+        return iPage;
     }
 
     @Override
     public FilmDetailResultVO describeFilmDetails(String searchStr, String searchType) throws CommonServiceException {
-        return null;
+        FilmDetailResultVO result ;
+        //0表示按编号查找， 1表示按名称查找
+        if("0".equals(searchType)){
+            result = filmInfoTMapper.describeFilmDetailByFilmId(searchStr);
+        }else{
+            result = filmInfoTMapper.describeFilmDetailByFilmName(searchStr);
+        }
+        return result;
     }
 
     @Override
     public String describeFilmBio(String filmId) throws CommonServiceException {
+
         return null;
     }
 
     @Override
     public ImagesResultVO describeFilmImages(String filmId) throws CommonServiceException {
+
         return null;
     }
 

@@ -1,5 +1,6 @@
 package com.tang.zhen.film.service.film;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.tang.zhen.film.comtroller.film.vo.request.DescribeFilmListReqVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
@@ -13,6 +14,7 @@ import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.SoonFilmListResultVO;
 import com.tang.zhen.film.dao.entity.FilmBrandDictT;
+import com.tang.zhen.film.dao.entity.FilmInfoT;
 import com.tang.zhen.film.service.common.CommonServiceException;
 
 import java.util.List;
@@ -67,7 +69,7 @@ public interface FilmServiceAPI {
     /*
        根据条件，获取对应的电影列表的信息
      */
-    List<DescribeFilmListResultVO> describeFilms(DescribeFilmListReqVO filmListReqVO)throws CommonServiceException;
+    IPage<FilmInfoT> describeFilms(DescribeFilmListReqVO filmListReqVO)throws CommonServiceException;
 
      /*
        获取电影的详情

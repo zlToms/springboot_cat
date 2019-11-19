@@ -1,12 +1,16 @@
 package com.tang.zhen.film.service.film;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.tang.zhen.film.comtroller.film.vo.request.DescribeFilmListReqVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.YearInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.FilmDetailResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.BannerInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.SoonFilmListResultVO;
+import com.tang.zhen.film.dao.entity.FilmInfoT;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -106,11 +110,19 @@ public class FilmServiceImplTest {
     }
 
     @Test
-    public void describeFilms() {
+    public void describeFilms() throws CommonServiceException {
+        DescribeFilmListReqVO describeFilmListReqVO = new DescribeFilmListReqVO();
+        IPage<FilmInfoT> filmInfoTIPage = filmServiceAPI.describeFilms(describeFilmListReqVO);
+        System.out.println(filmInfoTIPage.getCurrent()+","+filmInfoTIPage.getPages()+","
+        +filmInfoTIPage.getTotal());
     }
 
     @Test
-    public void describeFilmDetails() {
+    public void describeFilmDetails() throws CommonServiceException {
+        String searchStr  ="药神";
+        String searchType= "1";
+        FilmDetailResultVO vo = filmServiceAPI.describeFilmDetails(searchStr, searchType);
+        System.out.println(vo);
     }
 
     @Test
