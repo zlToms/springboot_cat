@@ -120,6 +120,18 @@ public class FilmServiceImpl implements  FilmServiceAPI {
         return results;
     }
 
+    @Override
+    public int describeIndexFilmNum(String filmType) throws CommonServiceException {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        if("2".equals(filmType)){
+            queryWrapper.eq("film_status","2");
+        }else{
+            queryWrapper.eq("film_status","1");
+        }
+        Integer integer = filmInfoTMapper.selectCount(queryWrapper);
+        return integer;
+    }
+
     private String localTime2String(LocalDateTime localDateTime){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return formatter.format(localDateTime);
@@ -337,24 +349,69 @@ public class FilmServiceImpl implements  FilmServiceAPI {
     }
 
     @Override
-    public String describeFilmBio(String filmId) throws CommonServiceException {
+    public String describeFilmBiography(String filmId) throws CommonServiceException {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_id",filmId);
 
-        return null;
+        String bipgraphy = "";
+
+        List<FilmDetailT> selectList = filmDetailTMapper.selectList(queryWrapper);
+        if(selectList!=null&& selectList.size()>0){
+            FilmDetailT detailT = selectList.get(0);
+            bipgraphy = detailT.getBiography();
+        }
+        return bipgraphy;
     }
 
     @Override
     public ImagesResultVO describeFilmImages(String filmId) throws CommonServiceException {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_id",filmId);
 
-        return null;
+        ImagesResultVO imagesResultVO = new ImagesResultVO();
+
+        List<FilmDetailT> selectList = filmDetailTMapper.selectList(queryWrapper);
+        if(selectList!=null&& selectList.size()>0){
+            FilmDetailT detailT = selectList.get(0);
+            String[] imgs = detailT.getFilmImgs().split(",");
+            //验证imgs是否存在，是不是4个
+            imagesResultVO.setMainImg(imgs[0]);
+            imagesResultVO.setImg01(imgs[1]);
+            imagesResultVO.setImg02(imgs[2]);
+            imagesResultVO.setImg03(imgs[3]);
+            imagesResultVO.setImg04(imgs[4]);
+        }
+
+        return imagesResultVO;
     }
 
     @Override
     public ActorResultVO describeDiestor(String filmId) throws CommonServiceException {
-        return null;
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("film_id",filmId);
+
+        String directorId = "";
+        ActorResultVO actorResultVO = new ActorResultVO();
+        //根据filmId获取导演编号
+        List<FilmDetailT> selectList = filmDetailTMapper.selectList(queryWrapper);
+        if(selectList!=null&& selectList.size()>0){
+            FilmDetailT detailT = selectList.get(0);
+            directorId = detailT.getDirectorId()+"";
+        }
+
+        //根据导演编号获取对应的导演信息
+        if(ToolUtils.isNotEmpty(directorId)){
+            FilmActorT director = actorTMapper.selectById(directorId);
+            actorResultVO.setDirectorName(director.getActorName());
+            actorResultVO.setImgAddress(director.getActorImg());
+        }
+
+        return actorResultVO;
     }
 
     @Override
     public List<ActorResultVO> describeActors(String filmId) throws CommonServiceException {
-        return null;
+        List<ActorResultVO> actorResultVOS = actorTMapper.describeActorsByFilmId(filmId);
+        return actorResultVOS;
     }
 }

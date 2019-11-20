@@ -38,6 +38,11 @@ public interface FilmServiceAPI {
 
 
     /*
+       获取热映或即将上映的影片数量
+       filmType 1 表示热映 2 表示即将上映
+     */
+    int describeIndexFilmNum(String filmType)throws CommonServiceException;
+    /*
           票房排行
      */
     List<RankFilmListResultVO> boxRankFilmList()throws CommonServiceException;
@@ -80,7 +85,7 @@ public interface FilmServiceAPI {
      /*
        获取电影的描述信息
       */
-     String describeFilmBio(String filmId) throws CommonServiceException;
+     String describeFilmBiography(String filmId) throws CommonServiceException;
 
      /*
        获取影片图片信息

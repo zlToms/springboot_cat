@@ -5,7 +5,9 @@ import com.tang.zhen.film.comtroller.film.vo.request.DescribeFilmListReqVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.condition.YearInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.ActorResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.FilmDetailResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.ImagesResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.BannerInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
@@ -126,18 +128,31 @@ public class FilmServiceImplTest {
     }
 
     @Test
-    public void describeFilmBio() {
+    public void describeFilmBio() throws CommonServiceException {
+        String s = filmServiceAPI.describeFilmBiography("2");
+        System.out.println(s);
     }
 
     @Test
-    public void describeFilmImages() {
+    public void describeFilmImages() throws CommonServiceException {
+        String filmId = "2";
+        ImagesResultVO vo = filmServiceAPI.describeFilmImages(filmId);
+        System.out.println(vo);
     }
 
     @Test
-    public void describeDiestor() {
+    public void describeDiestor() throws CommonServiceException {
+        String filmId = "2";
+        ActorResultVO vo = filmServiceAPI.describeDiestor(filmId);
+        System.out.println(vo);
     }
 
     @Test
-    public void describeActors() {
+    public void describeActors() throws CommonServiceException {
+        String filmId = "2";
+        List<ActorResultVO> actorResultVOS = filmServiceAPI.describeActors(filmId);
+        actorResultVOS.stream().forEach(
+                System.out::println
+        );
     }
 }
