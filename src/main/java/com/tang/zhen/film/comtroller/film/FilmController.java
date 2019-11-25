@@ -1,13 +1,21 @@
 package com.tang.zhen.film.comtroller.film;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.google.common.collect.Maps;
 import com.tang.zhen.film.comtroller.common.BaseResponseVO;
 import com.tang.zhen.film.comtroller.film.vo.request.DescribeFilmListReqVO;
+import com.tang.zhen.film.comtroller.film.vo.response.condition.CatInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.condition.SourceInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.condition.YearInfoResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.ActorResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.FilmDetailResultVO;
+import com.tang.zhen.film.comtroller.film.vo.response.filmdetail.ImagesResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.BannerInfoResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.HotFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.RankFilmListResultVO;
 import com.tang.zhen.film.comtroller.film.vo.response.index.SoonFilmListResultVO;
 import com.tang.zhen.film.config.properties.FilmProperties;
+import com.tang.zhen.film.dao.entity.FilmInfoT;
 import com.tang.zhen.film.service.common.CommonServiceException;
 import com.tang.zhen.film.service.film.FilmServiceAPI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,29 +92,58 @@ public class FilmController {
         sourceId = filmServiceAPI.checkCondition(sourceId,"source");
         yearId = filmServiceAPI.checkCondition(yearId,"year");
 
-        return null;
+        Map<String,Object> resultMap = Maps.newHashMap();
+        List<CatInfoResultVO> catInfoResultVOS = filmServiceAPI.describeCatInfos(catId);
+        List<SourceInfoResultVO> resultVOS = filmServiceAPI.describeSourceInfos(sourceId);
+        List<YearInfoResultVO> resultVOS1 = filmServiceAPI.describeYearInfos(yearId);
+
+        resultMap.put("catInfo",catInfoResultVOS);
+        resultMap.put("sourceInfo",resultVOS);
+        resultMap.put("yearInfo",resultVOS1);
+        return BaseResponseVO.success(resultMap);
     }
 
     /*
         获取电影列表信息
      */
     @RequestMapping(value = "/getFilms",method = RequestMethod.GET)
-    public BaseResponseVO getFilms(DescribeFilmListReqVO requestVO){
+    public BaseResponseVO getFilms(DescribeFilmListReqVO requestVO) throws CommonServiceException {
 
-        return null;
+        IPage<FilmInfoT> page = filmServiceAPI.describeFilms(requestVO);
+
+        return BaseResponseVO.success(page.getCurrent(),page.getPages(),filmProperties.getImgPre(),page.getRecords());
     }
 
 
     /*
-        获取电影列表信息
+        获取电影详情
      */
     @RequestMapping(value = "/films/{searchStr}",method = RequestMethod.GET)
-    public BaseResponseVO describeFilmDetails(
-            @PathVariable(name = "searchStr") String searchStr,
-            String searchType
-    ){
+    public BaseResponseVO describeFilmDetails(@PathVariable(name = "searchStr") String searchStr, String searchType) throws CommonServiceException {
 
-        return null;
+        //g根据查询条件获取电影编号
+        FilmDetailResultVO filmDetailResultVO = filmServiceAPI.describeFilmDetails(searchStr, searchType);
+
+        //biography
+        String biography = filmServiceAPI.describeFilmBiography(filmDetailResultVO.getFilmId());
+
+        //actors
+        Map<String,Object> actors = Maps.newHashMap();
+
+        ActorResultVO director = filmServiceAPI.describeDiestor(filmDetailResultVO.getFilmId());
+        List<ActorResultVO> actorResult = filmServiceAPI.describeActors(filmDetailResultVO.getFilmId());
+
+        actors.put("director",director);
+        actors.put("actors",actorResult);
+
+        //imgs
+        ImagesResultVO imagesResultVO = filmServiceAPI.describeFilmImages(filmDetailResultVO.getFilmId());
+
+        filmDetailResultVO.getInfo04().put("biography",biography);
+        filmDetailResultVO.getInfo04().put("actors",actors);
+
+        filmDetailResultVO.setImgs(imagesResultVO);
+        return BaseResponseVO.success(filmProperties.getImgPre(),filmDetailResultVO);
     }
 
 

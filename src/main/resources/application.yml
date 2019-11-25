@@ -37,3 +37,7 @@ logging:
 film:
   img-pre: http://nextfilm.cn/
 
+order:
+  file-path-pre : E:/视频/享学vip/猫眼商城/课程资料（spring boot猫眼商城）/14-15 订单模块/resources/
+
+
