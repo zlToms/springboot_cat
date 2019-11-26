@@ -27,5 +27,5 @@ public interface OrderServiceAPI {
     /*
     根据用户编号，获取用户购买过的电影订单信息
      */
-    IPage<OrderDetailResVO> describeOrderInfoByUser(String userId)throws CommonServiceException;
+    IPage<OrderDetailResVO> describeOrderInfoByUser(int nowPage, int pageSize , String userId)throws CommonServiceException;
 }

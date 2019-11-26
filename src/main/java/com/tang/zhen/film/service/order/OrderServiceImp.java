@@ -3,10 +3,12 @@ package com.tang.zhen.film.service.order;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tang.zhen.film.common.utils.ToolUtils;
 import com.tang.zhen.film.comtroller.cinema.vo.FieldHallInfoVO;
 import com.tang.zhen.film.comtroller.order.vo.response.OrderDetailResVO;
 import com.tang.zhen.film.config.properties.OrderProperties;
+import com.tang.zhen.film.dao.entity.FilmOrderT;
 import com.tang.zhen.film.dao.mapper.FilmOrderTMapper;
 import com.tang.zhen.film.service.cinema.CinemaServiceAPI;
 import com.tang.zhen.film.service.common.CommonServiceException;
@@ -68,21 +70,38 @@ public class OrderServiceImp implements OrderServiceAPI {
                 throw new CommonServiceException(500,"传入的信息有误");
             }
         }
-
     }
 
+    /*
+       检查待售的座位是否包含已经售卖的座位，有则抛异常
+     */
     @Override
     public void checkSoldSeats(String fieldId, String seats) throws CommonServiceException {
+        String soldSeats = filmOrderTMapper.describeSoldSeats(fieldId);
 
+        List<String> idsList = Arrays.asList(soldSeats.split(","));
+        String[] seatsArray = seats.split(",");
+        for(String seatId : seatsArray){
+            boolean contains = idsList.contains(seatId);
+            if(contains){
+                throw new CommonServiceException(500,seatId+"为已售座位,不能重复销售");
+            }
+        }
+    }
+    /*
+        根据用户编号，获取用户订单信息列表
+     */
+    @Override
+    public IPage<OrderDetailResVO> describeOrderInfoByUser(int nowPage, int pageSize ,String userId) throws CommonServiceException {
+        Page<FilmOrderT> page = new Page<>(nowPage,pageSize);
+        return filmOrderTMapper.describeOrderDtailsByUser(page,userId);
     }
 
     @Override
     public OrderDetailResVO saveOrder(String seatIds, String seatsNames, String fieldId, String userId) throws CommonServiceException {
+
         return null;
     }
 
-    @Override
-    public IPage<OrderDetailResVO> describeOrderInfoByUser(String userId) throws CommonServiceException {
-        return null;
-    }
+
 }
