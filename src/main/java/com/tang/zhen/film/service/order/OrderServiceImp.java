@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tang.zhen.film.common.utils.ToolUtils;
+import com.tang.zhen.film.comtroller.cinema.vo.CinemaFilmInfoVO;
 import com.tang.zhen.film.comtroller.cinema.vo.FieldHallInfoVO;
 import com.tang.zhen.film.comtroller.order.vo.response.OrderDetailResVO;
 import com.tang.zhen.film.config.properties.OrderProperties;
@@ -12,14 +13,19 @@ import com.tang.zhen.film.dao.entity.FilmOrderT;
 import com.tang.zhen.film.dao.mapper.FilmOrderTMapper;
 import com.tang.zhen.film.service.cinema.CinemaServiceAPI;
 import com.tang.zhen.film.service.common.CommonServiceException;
+import com.tang.zhen.film.service.order.bo.OrderPriceBO;
+import io.swagger.models.auth.In;
 import lombok.Cleanup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImp implements OrderServiceAPI {
@@ -100,7 +106,49 @@ public class OrderServiceImp implements OrderServiceAPI {
     @Override
     public OrderDetailResVO saveOrder(String seatIds, String seatsNames, String fieldId, String userId) throws CommonServiceException {
 
-        return null;
+        //非空检验 seatIds
+
+        String uuid = UUID.randomUUID().toString().replace("-","");
+
+        OrderPriceBO orderPriceBO = filmOrderTMapper.describeOrderPriceByFieldId(fieldId);
+
+        //单个座位的票价
+        double filmPrice = orderPriceBO.getFilmPrice();
+        //座位数
+        int seatNum = seatIds.split(",").length;
+        //总票价
+        double totalPrice = getTotalPrice(filmPrice,seatNum);
+
+        //获取filmId
+        CinemaFilmInfoVO cinemaFilmInfoVO = cinemaServiceAPI.describeFilmInfoByFieldId(fieldId);
+
+        FilmOrderT filmOrderT = new FilmOrderT();
+        filmOrderT.setUuid(uuid);
+        filmOrderT.setSeatsName(seatsNames);
+        filmOrderT.setSeatsIds(seatIds);
+        filmOrderT.setOrderUser(Integer.parseInt(userId));
+        filmOrderT.setOrderPrice(totalPrice);
+        filmOrderT.setFilmPrice(filmPrice);
+        filmOrderT.setFilmId(Integer.parseInt(cinemaFilmInfoVO.getFilmId()));
+        filmOrderT.setFieldId(Integer.parseInt(fieldId));
+        filmOrderT.setCinemaId(Integer.parseInt(orderPriceBO.getCinemaId()));
+
+        filmOrderTMapper.insert(filmOrderT);
+
+        return filmOrderTMapper.describeOrderDetailsById(uuid);
+    }
+
+    //计算总票价
+    private  double getTotalPrice (double filmPrice, int seatNum){
+        BigDecimal b1 = new BigDecimal(filmPrice);
+        BigDecimal b2 = new BigDecimal(seatNum);
+
+        BigDecimal multiply = b1.multiply(b2);
+
+        //小数点后取两位，同时四舍五入
+        BigDecimal result = multiply.setScale(2, RoundingMode.UP);
+
+        return result.doubleValue();
     }
 
 

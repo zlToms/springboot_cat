@@ -61,6 +61,15 @@ public final class BaseResponseVO<V> {
         return baseResponseVO;
     }
 
+    public static<V> BaseResponseVO success(Long nowPage,Long totalPage,V data){
+        BaseResponseVO baseResponseVO = new BaseResponseVO();
+        baseResponseVO.setStatus(0);
+        baseResponseVO.setData(data);
+        baseResponseVO.setTotalPage(totalPage);
+        baseResponseVO.setNowPage(nowPage);
+        return baseResponseVO;
+    }
+
     public static<V> BaseResponseVO success(String imgPre,V data){
         BaseResponseVO baseResponseVO = new BaseResponseVO();
         baseResponseVO.setStatus(0);

@@ -48,8 +48,13 @@ public class OrderServiceImpTest {
     }
 
     @Test
-    public void saveOrder() {
-
+    public void saveOrder() throws CommonServiceException {
+        String fieldId = "1";
+        String seatIds = "10,11,12";
+        String seatsNames = "安静的卡号";
+        String userId = "1";
+        OrderDetailResVO orderDetailResVO = orderServiceImp.saveOrder(seatIds, seatsNames, fieldId, userId);
+        System.out.println(orderDetailResVO);
     }
 
 
